@@ -1,6 +1,9 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { validateForm } from "../utils/validate";
-import TopicList from "../components/TopicList";
+import { validateForm } from "../../components/utlis/validate";
+import TopicList from "../../components/topics/TopicList";
+import DefaultLayout from "@/components/layout/defaultLayout";
 
 export default function Topics() {
   const [name, setName] = useState("");
@@ -13,7 +16,7 @@ export default function Topics() {
     size: 10,
   });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -57,39 +60,7 @@ export default function Topics() {
   }, []);
 
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <nav className="bg-blue-600 text-white p-4">
-        <div className="container mx-auto flex justify-between">
-          <a href="/" className="text-xl font-bold">
-            Forum App
-          </a>
-          <div>
-            <a href="/subjects" className="px-4">
-              Subjects
-            </a>
-            {localStorage.getItem("jwt") ? (
-              <button
-                onClick={() => {
-                  localStorage.removeItem("jwt");
-                  window.location.href = "/";
-                }}
-                className="px-4"
-              >
-                Logout
-              </button>
-            ) : (
-              <>
-                <a href="/login" className="px-4">
-                  Login
-                </a>
-                <a href="/register" className="px-4">
-                  Register
-                </a>
-              </>
-            )}
-          </div>
-        </div>
-      </nav>
+    <DefaultLayout>
       <main className="container mx-auto mt-8">
         <div className="bg-white p-8 rounded shadow-md">
           <h2 className="text-2xl font-bold mb-4">Topics</h2>
@@ -118,6 +89,6 @@ export default function Topics() {
           <TopicList topics={topics} fetchTopics={fetchTopics} />
         </div>
       </main>
-    </div>
+    </DefaultLayout>
   );
 }
