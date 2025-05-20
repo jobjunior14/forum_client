@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { validateForm } from "../../components/utlis/validate";
 import TopicList from "../../components/topics/TopicList";
 import DefaultLayout from "@/components/layout/defaultLayout";
+import axios from "axios";
 
 export default function Topics() {
   const [name, setName] = useState("");
@@ -16,6 +17,8 @@ export default function Topics() {
     size: 10,
   });
 
+  console.log(localStorage.getItem("jwt"));
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
@@ -25,33 +28,36 @@ export default function Topics() {
     try {
       const response = await fetch("http://localhost:8081/api/topics", {
         method: "POST",
+        // credentials: "include",
+        body: JSON.stringify({
+          name: name,
+        }),
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("jwt")}`,
         },
-        body: `name=${encodeURIComponent(name)}`,
       });
-      if (response.ok) {
+      if (response.status === 200) {
         setSuccess("Topic created");
         setName("");
         fetchTopics();
       } else {
         setError("Failed to create topic");
       }
-    } catch {
+    } catch (error) {
+      console.error("Error creating topic:", error);
       setError("Error creating topic");
     }
   };
 
   const fetchTopics = async (page = 0) => {
     try {
-      const response = await fetch(
+      const response = await axios.get(
         `http://localhost:8081/api/topics?page=${page}&size=10`
       );
-      const data = await response.json();
-      setTopics(data);
+      setTopics(response.data);
     } catch {
-      setError("Error loading topics");
+      setError("Erreur en chargeant les topics");
     }
   };
 
@@ -82,7 +88,7 @@ export default function Topics() {
                 type="submit"
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
               >
-                Create Topic
+                Créer un topique
               </button>
             </form>
           )}

@@ -1,10 +1,14 @@
 import Link from "next/link";
+import { useState } from "react";
+import AuthDialog from "../Dialog/authDialog";
 
 export default function DefaultLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [toggleAuthDialog, setToggleAuthDialog] = useState(false);
+
   return (
     <div className="bg-gray-100 min-h-screen">
       <nav className="bg-blue-600 text-white p-4">
@@ -27,20 +31,25 @@ export default function DefaultLayout({
                 }}
                 className="px-4"
               >
-                Logout
+                Deconnexion
               </button>
             ) : (
               <>
-                <Link href="/login" className="px-4">
-                  Login
-                </Link>
-                <Link href="/register" className="px-4">
-                  Register
-                </Link>
+                <button
+                  onClick={() => setToggleAuthDialog(true)}
+                  className="px-4"
+                >
+                  Connexion
+                </button>
               </>
             )}
           </div>
         </div>
+
+        <AuthDialog
+          setToggleAuthDialog={setToggleAuthDialog}
+          toggleAuthDialog={toggleAuthDialog}
+        />
       </nav>
       {children}
     </div>
