@@ -12,10 +12,12 @@ export default function TopicList({
       const response = await fetch(`http://localhost:8081/api/topics/${id}`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("jwt")}`,
         },
-        body: `name=${encodeURIComponent(name)}`,
+        body: JSON.stringify({
+          name: name,
+        }),
       });
       if (response.ok) fetchTopics(topics.number);
     } catch {

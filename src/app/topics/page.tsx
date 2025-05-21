@@ -10,14 +10,14 @@ export default function Topics() {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [query, setQuery] = useState("");
+
   const [topics, setTopics] = useState({
     content: [],
     number: 0,
     totalPages: 1,
     size: 10,
   });
-
-  console.log(localStorage.getItem("jwt"));
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -53,7 +53,9 @@ export default function Topics() {
   const fetchTopics = async (page = 0) => {
     try {
       const response = await axios.get(
-        `http://localhost:8081/api/topics?page=${page}&size=10`
+        `http://localhost:8081/api/topics?page=${page}&size=10&topicName=${encodeURIComponent(
+          query
+        )}`
       );
       setTopics(response.data);
     } catch {
@@ -63,7 +65,7 @@ export default function Topics() {
 
   useEffect(() => {
     fetchTopics();
-  }, []);
+  }, [query]);
 
   return (
     <DefaultLayout>
@@ -72,6 +74,29 @@ export default function Topics() {
           <h2 className="text-2xl font-bold mb-4">Topics</h2>
           {error && <div className="text-red-600 mb-4">{error}</div>}
           {success && <div className="text-green-600 mb-4">{success}</div>}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              fetchTopics();
+            }}
+            className="mb-4"
+          >
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search subjects"
+              className="p-2 border rounded"
+              required
+            />
+
+            <button
+              type="submit"
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              Search
+            </button>
+          </form>
           {localStorage.getItem("jwt") && (
             <form onSubmit={handleSubmit} className="mb-4 space-y-4">
               <div>
