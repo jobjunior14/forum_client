@@ -1,5 +1,5 @@
 import { TopicType, TopicListType } from "../types/topic";
-
+// import { useState } from "react";
 export default function TopicList({
   topics,
   fetchTopics,
@@ -55,7 +55,14 @@ export default function TopicList({
                 onClick={() => handleDelete(topic.id)}
                 className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 ml-2"
               >
-                Delete
+                Effacer
+              </button>
+
+              <button
+                onClick={() => handleDelete(topic.id)}
+                className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 ml-2"
+              >
+                Effacer
               </button>
             </div>
           )}

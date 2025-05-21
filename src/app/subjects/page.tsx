@@ -1,24 +1,27 @@
 "use client";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { validateForm } from "../../components/utlis/validate";
 import SubjectList from "../../components/subjects/SubjectList";
 import DefaultLayout from "@/components/layout/defaultLayout";
+import { SubjectType } from "@/components/types/subject";
 import { TopicType } from "@/components/types/topic";
 
 export default function Subjects() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState("all");
   const [topicId, setTopicId] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState<File | null>(null);
-  const [topics, setTopics] = useState<TopicType[]>([]);
+  const [topics, setTopics] = useState([]);
   const [subjects, setSubjects] = useState({
     content: [],
     number: 0,
     totalPages: 1,
     size: 10,
   });
+  const [comments, setComments] = useState<Record<string, any>>({});
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -42,8 +45,21 @@ export default function Subjects() {
       const response = await fetch(url);
       const data = await response.json();
       setSubjects(data);
+      data.content.forEach((subject: SubjectType) => fetchComments(subject.id));
     } catch {
       setError("Error loading subjects");
+    }
+  };
+
+  const fetchComments = async (subjectId: string) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8081/api/comments/${subjectId}?page=0&size=10`
+      );
+      const data = await response.json();
+      setComments((prev) => ({ ...prev, [subjectId]: data }));
+    } catch {
+      setError("Error loading comments");
     }
   };
 
@@ -115,7 +131,7 @@ export default function Subjects() {
               <option value="">All Topics</option>
               {topics.map((topic: TopicType) => (
                 <option key={topic.id} value={topic.id}>
-                  {topic.name}
+                  {topic.name} (by {topic.username})
                 </option>
               ))}
             </select>
@@ -154,10 +170,10 @@ export default function Subjects() {
                   onChange={(e) => setTopicId(e.target.value)}
                   className="p-2 border rounded"
                 >
-                  <option value="">No Topic</option>
+                  <option value="">Pas de toptique</option>
                   {topics.map((topic: TopicType) => (
-                    <option key={topic.id} value={topic.id}>
-                      {topic.name}
+                    <option key={topic?.id} value={topic.id}>
+                      {topic.name} (by {topic.username})
                     </option>
                   ))}
                 </select>
@@ -166,9 +182,9 @@ export default function Subjects() {
                 <label className="block text-sm font-medium">Image</label>
                 <input
                   type="file"
-                  onChange={(e) =>
-                    setImage(e.target.files ? e.target.files[0] : null)
-                  }
+                  onChange={(e) => {
+                    if (e.target.files) setImage(e.target.files[0]);
+                  }}
                   className="p-2"
                 />
               </div>
@@ -180,7 +196,12 @@ export default function Subjects() {
               </button>
             </form>
           )}
-          <SubjectList subjects={subjects} fetchSubjects={fetchSubjects} />
+          <SubjectList
+            subjects={subjects}
+            comments={comments}
+            fetchSubjects={fetchSubjects}
+            fetchComments={fetchComments}
+          />
         </div>
       </main>
     </DefaultLayout>
