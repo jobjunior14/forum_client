@@ -9,7 +9,7 @@ import { SubjectType } from "@/components/types/subject";
 import { TopicType } from "@/components/types/topic";
 
 export default function Subjects() {
-  const [query, setQuery] = useState("all");
+  const [query, setQuery] = useState("");
   const [topicId, setTopicId] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");

@@ -2,6 +2,7 @@
 import Link from "next/link";
 import CommentList from "../comments/commentList";
 import { SubjectType } from "../types/subject";
+import Image from "next/image";
 
 export default function SubjectList({
   subjects,
@@ -14,6 +15,7 @@ export default function SubjectList({
   fetchSubjects: any;
   fetchComments: any;
 }) {
+  console.log("subjects", subjects);
   return (
     <div className="space-y-4">
       {subjects.content.map((subject: SubjectType) => (
@@ -22,7 +24,10 @@ export default function SubjectList({
           <p>By: {subject.username}</p>
           <p>{subject.content}</p>
           {subject.imagePath && (
-            <img
+            <Image
+              alt="Subject Image"
+              width={400}
+              height={400}
               src={`http://localhost:8081/uploads/${subject.imagePath}`}
               className="max-w-xs"
             />

@@ -1,3 +1,5 @@
+"use client";
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { SetStateAction } from "react";
 import {
@@ -109,7 +111,8 @@ export default function AuthDialog({
       );
 
       if (response.status === 200) {
-        localStorage.setItem("jwt", response.data);
+        localStorage.setItem("jwt", response.data?.token);
+        localStorage.setItem("userId", response.data?.userId);
         setIsLoding(false);
         toast.success("Connexion réussie");
         setToggleAuthDialog(false);
